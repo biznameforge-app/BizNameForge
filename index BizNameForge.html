@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BizNameForge- Find Your Perfect Name</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            padding: 30px 20px;
+            font-family: Arial, sans-serif;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(
+                circle at top,
+                #20205a 0%,
+                #0b1020 55%,
+                #050711 100%
+            );
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            padding: 40px 25px;
+            border: 1px solid #334155;
+            border-radius: 24px;
+            background: rgba(15, 23, 42, 0.85);
+            box-shadow: 0 0 45px rgba(59, 130, 246, 0.15);
+        }
+
+        h1 {
+            margin: 0 0 15px;
+            font-size: clamp(42px, 8vw, 64px);
+            background: linear-gradient(90deg, #38bdf8, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle {
+            color: #cbd5e1;
+            font-size: 19px;
+            line-height: 1.6;
+        }
+
+        h2 {
+            margin-top: 35px;
+            font-size: 22px;
+        }
+
+        input, select {
+            width: 100%;
+            margin-top: 12px;
+            padding: 15px;
+            border: 1px solid #475569;
+            border-radius: 10px;
+            background: #0b1020;
+            color: white;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 18px;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #2563eb, #8b5cf6);
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: scale(1.03);
+        }
+
+        #results {
+            margin-top: 25px;
+            display: grid;
+            gap: 10px;
+        }
+
+        .name-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 15px;
+    border: 1px solid #334155;
+    border-radius: 10px;
+    background: #111827;
+    color: #93c5fd;
+    font-size: 18px;
+}
+
+.name-card button {
+    width: auto;
+    min-width: 110px;
+    margin-top: 0;
+}
+
+        .footer {
+            margin-top: 25px;
+            color: #64748b;
+            font-size: 13px;
+        }
+    </style>
+</head>
+
+<body>
+    <main class="container">
+        <h1>BizNameForge</h1>
+
+        <p class="subtitle">
+            Find the perfect name for your next big idea.
+        </p>
+
+       <h2>בשביל מה אתה צריך שם?</h2>
+
+<select id="category">
+    <option value="business">עסק</option>
+    <option value="brand">מותג</option>
+    <option value="gaming">ערוץ גיימינג</option>
+</select>
+
+<input
+    id="keyword"
+    type="text"
+   placeholder="Describe your business or idea..."
+>
+
+       <button onclick="generateNames()">
+    צור לי שמות ✨
+</button>
+
+        <div id="results"></div>
+
+        <p class="footer">
+          BizNameForge — Turn ideas into names.
+        </p>
+    </main>
+
+   <script>
+    function generateNames() {
+        const category = document.getElementById("category").value;
+        const keyword = document.getElementById("keyword").value.trim();
+
+        const names = {
+            business: [
+                "Bright Horizon", "NextPeak", "Urban Nest",
+                "Prime Path", "Nova Works", "Elevate Studio",
+                "BluePeak", "Golden Oak", "SmartNest",
+                "TrueNorth", "EverBloom", "BrightForge",
+                "SummitWorks", "ClearPath", "VisionCraft"
+            ],
+
+            brand: [
+                "Velora", "Nexora", "Lumivo", "Zenvia",
+                "Orvex", "Novique", "Aurevia", "Virello",
+                "Zenova", "Elvora", "Nexelle", "Vantoro",
+                "Lumora", "Avyra", "Zentro"
+            ],
+
+            gaming: [
+                "ShadowPulse", "PixelStorm", "NovaStrike",
+                "NightVortex", "CyberFalcon", "PhantomRush",
+                "VoidHunter", "BlazeRift", "DarkNova",
+                "StormByte", "GhostTrigger", "FrostViper",
+                "NeonReaper", "TurboSpectre", "ChaosWing"
+            ]
+        };
+
+        const results = document.getElementById("results");
+        results.innerHTML = "";
+
+        // מערבבים את השמות ובוחרים חמישה
+        const shuffledNames = [...names[category]]
+            .sort(() => Math.random() - 0.5)
+            .slice(0,10);
+
+        shuffledNames.forEach(function(name) {
+            const card = document.createElement("div");
+            card.className = "name-card";
+
+            const nameText = document.createElement("span");
+nameText.textContent = name;
+
+            const copyButton = document.createElement("button");
+            copyButton.textContent = "העתק 📋";
+
+            copyButton.onclick = async function() {
+                try {
+                    await navigator.clipboard.writeText(nameText.textContent);
+                    copyButton.textContent = "הועתק! ✅";
+                } catch (error) {
+                    copyButton.textContent = "לא ניתן להעתיק";
+                }
+            };
+
+            card.appendChild(nameText);
+            card.appendChild(copyButton);
+            results.appendChild(card);
+        });
+    }
+</script>
+</body>
+</html>
