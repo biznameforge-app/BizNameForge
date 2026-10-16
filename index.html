@@ -311,7 +311,7 @@ function renderPlans(){
     c.innerHTML="<b>"+name+'</b><span class="price">'+price+"</span><ul>"+perks.map(x=>"<li>"+x+"</li>").join("")+"</ul>";
     const b=document.createElement("button"); b.type="button"; b.className="up"; b.disabled=(k===plan);
     b.textContent=k===plan?t.cur:(k==="free"?t.dg:t.up);
-    b.addEventListener("click",()=>{if(CHECKOUT[k]){window.open(CHECKOUT[k],"_blank","noopener");return;}plan=k;renderPlans();renderFavs();results.innerHTML="";hint.textContent="";goBtn.textContent=tx().go;});
+    b.addEventListener("click",()=>{track("select_plan",{plan:k});if(CHECKOUT[k]){window.open(CHECKOUT[k],"_blank","noopener");return;}plan=k;renderPlans();renderFavs();results.innerHTML="";hint.textContent="";goBtn.textContent=tx().go;});
     c.append(b); box.append(c);
   });
 }
@@ -380,7 +380,7 @@ goBtn.addEventListener("click",()=>{
   hint.textContent=(kw&&!p.kw)?t.kwl:"";
   render(buildNames(cat,cat.subs[subEl.value],kw,p),p);
   if(p.daily!==Infinity) bump();
-  goBtn.textContent=t.more;
+  goBtn.textContent=t.more;track("generate_names",{category:catEl.value});
 });
 kwEl.addEventListener("keydown",e=>{if(e.key==="Enter"&&!goBtn.disabled)goBtn.click();});
 $("lang").addEventListener("click",()=>{lang=lang==="he"?"en":"he"; try{localStorage.setItem("bnf_lang",lang);}catch(e){} applyLang();});
@@ -422,6 +422,14 @@ $("dPlay").addEventListener("click",async()=>{
   }
 });
 const _d=DEMO.en; $("dCat").textContent="—"; $("dSub").textContent="—"; $("dBtn").textContent=_d.btn; $("dCap").textContent=_d.caps[0];
+/* ===== שירותים חיצוניים (אופציונלי, בלי שרת) =====
+   tawk: צ'אט שירות + פאנל ניהול. הדביקו "PROPERTY_ID/WIDGET_ID" מקוד ההטמעה של Tawk.to
+   ga:   סטטיסטיקות כניסות והורדות. הדביקו מזהה כמו G-XXXXXXXXXX מ-Google Analytics */
+const EXT={tawk:"",ga:""};
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+if(/^\w+\/\w+$/.test(EXT.tawk)){const t=document.createElement("script");t.async=true;t.src="https://embed.tawk.to/"+EXT.tawk;t.charset="UTF-8";t.setAttribute("crossorigin","*");document.head.appendChild(t);}
+if(/^G-\w+$/.test(EXT.ga)){const g=document.createElement("script");g.async=true;g.src="https://www.googletagmanager.com/gtag/js?id="+EXT.ga;document.head.appendChild(g);gtag("js",new Date());gtag("config",EXT.ga);}
+const track=(n,p)=>{if(/^G-\w+$/.test(EXT.ga))gtag("event",n,p||{});};
 let dip=null;
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();dip=e;$("inst").hidden=false;});
 $("inst").addEventListener("click",async()=>{if(!dip)return;dip.prompt();await dip.userChoice;dip=null;$("inst").hidden=true;});
